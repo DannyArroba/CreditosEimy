@@ -6,7 +6,6 @@
     <title>Registrar Electrodoméstico</title>
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="./css/tailwind.css">
-  
 </head>
 <body class="bg-gray-100 p-6">
     <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
@@ -18,7 +17,11 @@
             </div>
             <div class="mb-5">
                 <label for="color" class="block text-gray-700 font-semibold mb-2">Color:</label>
-                <input type="text" id="color" name="color" class="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                <select id="color" name="color" class="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                    <option value="blanco">Blanco</option>
+                    <option value="gris">Gris</option>
+                    <option value="negro">Negro</option>
+                </select>
             </div>
             <div class="mb-5">
                 <label for="consumo" class="block text-gray-700 font-semibold mb-2">Consumo Energético (letras entre A y C):</label>
@@ -139,11 +142,61 @@
                     $consumo = $_POST["consumo"];
                     $peso = $_POST["peso"];
 
+                    // Tabla de colores
+                    $descuento = 0;
+                    switch ($color) {
+                        case "blanco":
+                            $descuento = 10;
+                            break;
+                        case "gris":
+                            $descuento = 20;
+                            break;
+                        case "negro":
+                            $descuento = 30;
+                            break;
+                        default:
+                            $descuento = 0;
+                            break;
+                    }
+
+                    // Tabla de consumo energético
+                    $precio_consumo = 0;
+                    switch ($consumo) {
+                        case "A":
+                            $precio_consumo = 100;
+                            break;
+                        case "B":
+                            $precio_consumo = 80;
+                            break;
+                        case "C":
+                            $precio_consumo = 60;
+                            break;
+                        default:
+                            $precio_consumo = 0;
+                            break;
+                    }
+
+                    // Tabla de peso
+                    $precio_peso = 0;
+                    if ($peso >= 0 && $peso < 20) {
+                        $precio_peso = 10;
+                    } elseif ($peso >= 20 && $peso < 50) {
+                        $precio_peso = 50;
+                    }
+
+                    // Calcular el precio del producto
+                    $precio = $precio_consumo + $precio_peso;
+
+                    // Calcular el descuento
+                    $precio_descuento = $precio * ($descuento / 100);
+
                     // Asignar los valores a un array asociativo
                     $datos_electrodomestico["Nombre"] = $nombre;
                     $datos_electrodomestico["Color"] = $color;
                     $datos_electrodomestico["Consumo Energético"] = $consumo;
                     $datos_electrodomestico["Peso (kg)"] = $peso;
+                    $datos_electrodomestico["Precio del Producto"] = $precio;
+                    $datos_electrodomestico["Descuento"] = $precio_descuento;
 
                     // Iterar sobre el array asociativo y mostrar cada clave y valor en una fila de la tabla
                     foreach ($datos_electrodomestico as $atributo => $valor) {
